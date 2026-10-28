@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>كاميرا الختم الملكي | 3D ROYAL HOUSE</title>
+  
+  <!-- إضافة الأوزان الرفيعة للخط الكوفي (400 و 500) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0b0f19;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Reem Kufi', sans-serif;
+    }
+
+    /* منطقة الكاميرا */
+    .viewport {
+      flex: 1;
+      position: relative;
+      background: #000;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    video, #previewImg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #previewImg {
+      display: none;
+    }
+
+    .top-bar {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      display: flex;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    .circle-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #e5b338;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* المعاينة الحية للختم */
+    .watermark-overlay {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: none;
+      z-index: 5;
+      text-align: center;
+      width: 100%;
+    }
+
+    .logo-svg {
+      width: 120px;
+      height: 120px;
+      filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6));
+      margin-bottom: -15px;
+    }
+
+    .brand-title {
+      font-family: 'Reem Kufi', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 500; /* تم التعديل إلى وزن رفيع/متوسط */
+      letter-spacing: 1px;
+      background: linear-gradient(180deg, #fce186 0%, #db9a1a 50%, #b37812 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0px 3px 2px rgba(0,0,0,0.8));
+      margin-bottom: -12px;
+    }
+
+    .brand-sub {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: 4px;
+      color: #ffffff; 
+      text-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
+    }
+
+    /* التحكم */
+    .controls {
+      background: #0f172a;
+      border-top: 1px solid #1e293b;
+      padding: 16px 20px;
+      display: flex;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #e5b338, #b6821b);
+      color: #0b0f19;
+      box-shadow: 0 4px 15px rgba(229, 179, 56, 0.3);
+    }
+
+    .btn-dark {
+      background: #1e293b;
+      color: #cbd5e1;
+      border: 1px solid #334155;
+    }
+
+    canvas {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewport" id="viewport">
+    <div class="top-bar">
+      <button class="circle-btn" onclick="switchCamera()">🔄</button>
+    </div>
+
+    <video id="video" autoplay playsinline muted></video>
+    <img id="previewImg" alt="المعاينة">
+
+    <!-- الختم الحي -->
+    <div class="watermark-overlay">
+      <svg class="logo-svg" viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="gold3D" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#fce186" />
+            <stop offset="50%" stop-color="#db9a1a" />
+            <stop offset="100%" stop-color="#a16b0f" />
+          </linearGradient>
+        </defs>
+        <g stroke-width="12" stroke-linejoin="miter" stroke-linecap="butt" fill="none">
+          <path d="M 30,95 L 100,25 L 170,95 M 55,75 L 55,160 L 100,130 L 145,160 L 145,75" stroke="#613f06" transform="translate(0, 4)" />
+          <path d="M 30,95 L 100,25 L 170,95 M 55,75 L 55,160 L 100,130 L 145,160 L 145,75" stroke="#fff4b3" transform="translate(0, -3)" />
+          <path d="M 30,95 L 100,25 L 170,95 M 55,75 L 55,160 L 100,130 L 145,160 L 145,75" stroke="url(#gold3D)" stroke-width="10" />
+        </g>
+        <g stroke-width="10" stroke-linejoin="round" stroke-linecap="round" fill="none">
+          <path d="M 100,85 C 80,60 55,70 65,100 C 75,125 100,140 100,140 C 100,140 125,125 135,100 C 145,70 120,60 100,85 Z" stroke="#888888" transform="translate(0, 3)" />
+          <path d="M 100,85 C 80,60 55,70 65,100 C 75,125 100,140 100,140 C 100,140 125,125 135,100 C 145,70 120,60 100,85 Z" stroke="#ffffff" />
+        </g>
+      </svg>
+      
+      <div class="brand-title">البيت الملكي</div>
+      <div class="brand-sub">ROYAL HOUSE</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="action-btn btn-dark" onclick="document.getElementById('fileInput').click()">
+      🖼️ من المعرض
+    </button>
+    <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="loadGalleryImage(event)">
+
+    <button class="action-btn btn-gold" onclick="captureAndStamp()">
+      📥 حفظ الصورة مع الختم
+    </button>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const video = document.getElementById('video');
+    const previewImg = document.getElementById('previewImg');
+    const canvas = document.getElementById('canvas');
+    let currentFacingMode = 'environment';
+    let localStream = null;
+
+    async function startCamera() {
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+      }
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: currentFacingMode },
+          audio: false
+        });
+        video.srcObject = localStream;
+        video.style.display = 'block';
+        previewImg.style.display = 'none';
+      } catch (err) {
+        console.warn("الكاميرا غير متاحة:", err);
+      }
+    }
+
+    function switchCamera() {
+      currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
+      startCamera();
+    }
+
+    startCamera();
+
+    function loadGalleryImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        previewImg.src = event.target.result;
+        previewImg.style.display = 'block';
+        video.style.display = 'none';
+        if (localStream) {
+          localStream.getTracks().forEach(t => t.stop());
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function draw3DPath(ctx, pathFunc, lineWidth, s, isWhite = false, topY, bottomY) {
+      ctx.save();
+      pathFunc();
+      ctx.lineWidth = lineWidth;
+      ctx.lineJoin = isWhite ? 'round' : 'miter';
+      ctx.lineCap = isWhite ? 'round' : 'butt';
+      ctx.shadowColor = 'rgba(0,0,0,0.7)';
+      ctx.shadowBlur = 12 * s;
+      ctx.shadowOffsetY = 6 * s;
+      ctx.strokeStyle = isWhite ? '#777777' : '#6b4507';
+      ctx.translate(0, 4 * s);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      pathFunc();
+      ctx.lineWidth = lineWidth;
+      ctx.lineJoin = isWhite ? 'round' : 'miter';
+      ctx.lineCap = isWhite ? 'round' : 'butt';
+      ctx.strokeStyle = isWhite ? '#ffffff' : '#ffefa8';
+      ctx.translate(0, -3 * s);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      pathFunc();
+      ctx.lineWidth = lineWidth * 0.8;
+      ctx.lineJoin = isWhite ? 'round' : 'miter';
+      ctx.lineCap = isWhite ? 'round' : 'butt';
+      
+      if (isWhite) {
+        ctx.strokeStyle = '#ffffff';
+      } else {
+        const goldGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
+        goldGrad.addColorStop(0, '#fce186');
+        goldGrad.addColorStop(0.5, '#db9a1a');
+        goldGrad.addColorStop(1, '#a16b0f');
+        ctx.strokeStyle = goldGrad;
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function draw3DText(ctx, text, x, y, font, s, isWhite = false, topY, bottomY) {
+      ctx.font = font;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.9)';
+      ctx.shadowBlur = 10 * s;
+      ctx.shadowOffsetY = 5 * s;
+      ctx.fillStyle = isWhite ? '#888888' : '#6b4507';
+      ctx.fillText(text, x, y + (4 * s));
+      ctx.restore();
+
+      if (!isWhite) {
+        ctx.save();
+        ctx.fillStyle = '#ffefa8';
+        ctx.fillText(text, x, y - (2 * s));
+        ctx.restore();
+      }
+
+      ctx.save();
+      if (isWhite) {
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 8 * s;
+      } else {
+        const goldGrad = ctx.createLinearGradient(0, topY, 0, bottomY);
+        goldGrad.addColorStop(0, '#fce186');
+        goldGrad.addColorStop(0.5, '#db9a1a');
+        goldGrad.addColorStop(1, '#a16b0f');
+        ctx.fillStyle = goldGrad;
+      }
+      ctx.fillText(text, x, y);
+      ctx.restore();
+    }
+
+    function captureAndStamp() {
+      document.fonts.ready.then(() => {
+        const ctx = canvas.getContext('2d');
+        const isGallery = previewImg.style.display === 'block';
+        const source = isGallery ? previewImg : video;
+
+        if (!isGallery && video.videoWidth === 0) {
+          alert("يرجى فتح الكاميرا أو اختيار صورة أولاً");
+          return;
+        }
+
+        const w = isGallery ? previewImg.naturalWidth : video.videoWidth;
+        const h = isGallery ? previewImg.naturalHeight : video.videoHeight;
+
+        canvas.width = w;
+        canvas.height = h;
+        ctx.drawImage(source, 0, 0, w, h);
+
+        const s = Math.min(w, h) / 1000;
+        const cx = w / 2;
+        const startY = h - (350 * s); 
+
+        const roofApexY = startY;
+        const eaveY = startY + (70 * s);
+        const eaveX = 75 * s;
+        
+        const wallX = 45 * s;
+        const wallTopY = startY + (45 * s);
+        const wallBottomY = startY + (130 * s);
+        const vCutY = startY + (100 * s);
+
+        const drawRoof = () => {
+          ctx.beginPath();
+          ctx.moveTo(cx - eaveX, eaveY);
+          ctx.lineTo(cx, roofApexY);
+          ctx.lineTo(cx + eaveX, eaveY);
+        };
+
+        const drawWalls = () => {
+          ctx.beginPath();
+          ctx.moveTo(cx - wallX, wallTopY);
+          ctx.lineTo(cx - wallX, wallBottomY);
+          ctx.lineTo(cx, vCutY);
+          ctx.lineTo(cx + wallX, wallBottomY);
+          ctx.lineTo(cx + wallX, wallTopY);
+        };
+
+        const drawHeart = () => {
+          ctx.beginPath();
+          const hy = startY + 60 * s; 
+          ctx.moveTo(cx, hy + 15 * s);
+          ctx.bezierCurveTo(cx - 25 * s, hy - 15 * s, cx - 45 * s, hy + 15 * s, cx, hy + 50 * s);
+          ctx.bezierCurveTo(cx + 45 * s, hy + 15 * s, cx + 25 * s, hy - 15 * s, cx, hy + 15 * s);
+        };
+
+        const strokeW = 12 * s;
+        draw3DPath(ctx, drawRoof, strokeW, s, false, roofApexY, startY + 140 * s);
+        draw3DPath(ctx, drawWalls, strokeW, s, false, roofApexY, startY + 140 * s);
+        draw3DPath(ctx, drawHeart, strokeW * 0.85, s, true, 0, 0); 
+
+        // النص العربي الكوفي بوزن رفيع/متوسط (500 بدلاً من 700)
+        const textArabicY = startY + (205 * s);
+        draw3DText(ctx, "البيت الملكي", cx, textArabicY, `500 ${82 * s}px 'Reem Kufi', sans-serif`, s, false, textArabicY - 40 * s, textArabicY + 40 * s);
+
+        // النص الإنجليزي نحيف ومتباعد
+        const textEngY = startY + (275 * s);
+        if (ctx.letterSpacing !== undefined) {
+          ctx.letterSpacing = `${8 * s}px`;
+        }
+        draw3DText(ctx, "ROYAL HOUSE", cx, textEngY, `400 ${45 * s}px 'Montserrat', sans-serif`, s, true, 0, 0);
+        
+        if (ctx.letterSpacing !== undefined) {
+          ctx.letterSpacing = '0px'; 
+        }
+
+        const link = document.createElement('a');
+        link.download = `Royal_House_3D_${Date.now()}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 1.0); 
+        link.click();
+      });
+    }
+  </script>
+</body>
+  </html>
