@@ -19,15 +19,18 @@
 
     html, body {
       width: 100%;
-      height: 100%;
-      height: 100dvh;
+      height: 100vh;
+      height: 100svh;
+      position: fixed;
+      top: 0;
+      left: 0;
       overflow: hidden;
       background-color: #000;
       color: #fff;
       font-family: 'Reem Kufi', sans-serif;
     }
 
-    /* منطقة الكاميرا تملأ كامل الشاشة */
+    /* منطقة الكاميرا */
     .viewport {
       position: absolute;
       top: 0;
@@ -50,14 +53,14 @@
       display: none;
     }
 
-    /* زر تبديل الكاميرا بالأعلى */
+    /* زر التبديل بالأعلى */
     .top-bar {
       position: absolute;
-      top: max(16px, env(safe-area-inset-top));
-      right: 16px;
+      top: 15px;
+      right: 15px;
       display: flex;
       gap: 12px;
-      z-index: 20;
+      z-index: 50;
     }
 
     .circle-btn {
@@ -76,31 +79,31 @@
       cursor: pointer;
     }
 
-    /* الختم الحي */
+    /* الختم الحي مع إزاحة كافية فوق الأزرار */
     .watermark-overlay {
       position: absolute;
-      bottom: calc(105px + env(safe-area-inset-bottom));
+      bottom: 95px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
       pointer-events: none;
-      z-index: 10;
+      z-index: 20;
       text-align: center;
       width: 100%;
     }
 
     .logo-svg {
-      width: 110px;
-      height: 110px;
+      width: 105px;
+      height: 105px;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6));
       margin-bottom: -12px;
     }
 
     .brand-title {
       font-family: 'Reem Kufi', sans-serif;
-      font-size: 2.6rem;
+      font-size: 2.5rem;
       font-weight: 500;
       letter-spacing: 1px;
       background: linear-gradient(180deg, #fce186 0%, #db9a1a 50%, #b37812 100%);
@@ -112,30 +115,33 @@
 
     .brand-sub {
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 400;
       letter-spacing: 4px;
       color: #ffffff; 
       text-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
     }
 
-    /* شريط الأزرار طافي بالأسفل دون أن يغيب */
+    /* شريط التحكم ثابت بأسفل الشاشة الظاهرة */
     .controls {
-      position: absolute;
+      position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+      padding: 10px 16px 14px 16px;
       display: flex;
-      gap: 12px;
-      z-index: 20;
-      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
+      gap: 10px;
+      z-index: 50;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .action-btn {
       flex: 1;
-      padding: 14px;
-      border-radius: 14px;
+      padding: 12px;
+      border-radius: 12px;
       font-weight: 800;
       font-size: 0.95rem;
       border: none;
@@ -143,7 +149,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
+      white-space: nowrap;
     }
 
     .action-btn:active {
@@ -157,11 +164,9 @@
     }
 
     .btn-dark {
-      background: rgba(30, 41, 59, 0.85);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: #1e293b;
       color: #f1f5f9;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid #334155;
     }
 
     canvas {
