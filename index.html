@@ -2,10 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>كاميرا الختم الملكي | 3D ROYAL HOUSE</title>
   
-  <!-- إضافة الأوزان الرفيعة للخط الكوفي (400 و 500) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
@@ -18,21 +17,23 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    body {
-      background-color: #0b0f19;
-      color: #fff;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
       overflow: hidden;
+      background-color: #000;
+      color: #fff;
       font-family: 'Reem Kufi', sans-serif;
     }
 
-    /* منطقة الكاميرا */
+    /* منطقة الكاميرا تملأ كامل الشاشة */
     .viewport {
-      flex: 1;
-      position: relative;
-      background: #000;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -49,21 +50,23 @@
       display: none;
     }
 
+    /* زر تبديل الكاميرا بالأعلى */
     .top-bar {
       position: absolute;
-      top: 15px;
-      right: 15px;
+      top: max(16px, env(safe-area-inset-top));
+      right: 16px;
       display: flex;
       gap: 12px;
-      z-index: 10;
+      z-index: 20;
     }
 
     .circle-btn {
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: rgba(15, 23, 42, 0.75);
+      background: rgba(15, 23, 42, 0.7);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #e5b338;
       display: flex;
@@ -73,65 +76,68 @@
       cursor: pointer;
     }
 
-    /* المعاينة الحية للختم */
+    /* الختم الحي */
     .watermark-overlay {
       position: absolute;
-      bottom: 40px;
+      bottom: calc(105px + env(safe-area-inset-bottom));
       left: 50%;
       transform: translateX(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
       pointer-events: none;
-      z-index: 5;
+      z-index: 10;
       text-align: center;
       width: 100%;
     }
 
     .logo-svg {
-      width: 120px;
-      height: 120px;
+      width: 110px;
+      height: 110px;
       filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.6));
-      margin-bottom: -15px;
+      margin-bottom: -12px;
     }
 
     .brand-title {
       font-family: 'Reem Kufi', sans-serif;
-      font-size: 2.8rem;
-      font-weight: 500; /* تم التعديل إلى وزن رفيع/متوسط */
+      font-size: 2.6rem;
+      font-weight: 500;
       letter-spacing: 1px;
       background: linear-gradient(180deg, #fce186 0%, #db9a1a 50%, #b37812 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0px 3px 2px rgba(0,0,0,0.8));
-      margin-bottom: -12px;
+      margin-bottom: -10px;
     }
 
     .brand-sub {
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.4rem;
+      font-size: 1.25rem;
       font-weight: 400;
       letter-spacing: 4px;
       color: #ffffff; 
       text-shadow: 0 4px 6px rgba(0, 0, 0, 0.9);
     }
 
-    /* التحكم */
+    /* شريط الأزرار طافي بالأسفل دون أن يغيب */
     .controls {
-      background: #0f172a;
-      border-top: 1px solid #1e293b;
-      padding: 16px 20px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
       display: flex;
       gap: 12px;
-      z-index: 10;
+      z-index: 20;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 70%, transparent 100%);
     }
 
     .action-btn {
       flex: 1;
       padding: 14px;
-      border-radius: 12px;
+      border-radius: 14px;
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 0.95rem;
       border: none;
       cursor: pointer;
       display: flex;
@@ -141,19 +147,21 @@
     }
 
     .action-btn:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
 
     .btn-gold {
       background: linear-gradient(135deg, #e5b338, #b6821b);
       color: #0b0f19;
-      box-shadow: 0 4px 15px rgba(229, 179, 56, 0.3);
+      box-shadow: 0 4px 15px rgba(229, 179, 56, 0.4);
     }
 
     .btn-dark {
-      background: #1e293b;
-      color: #cbd5e1;
-      border: 1px solid #334155;
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #f1f5f9;
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     canvas {
@@ -223,14 +231,18 @@
       }
       try {
         localStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: currentFacingMode },
+          video: { 
+            facingMode: currentFacingMode,
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+          },
           audio: false
         });
         video.srcObject = localStream;
         video.style.display = 'block';
         previewImg.style.display = 'none';
       } catch (err) {
-        console.warn("الكاميرا غير متاحة:", err);
+        console.warn("الكاميرا غير متاحة أو تم رفض الإذن:", err);
       }
     }
 
@@ -395,11 +407,9 @@
         draw3DPath(ctx, drawWalls, strokeW, s, false, roofApexY, startY + 140 * s);
         draw3DPath(ctx, drawHeart, strokeW * 0.85, s, true, 0, 0); 
 
-        // النص العربي الكوفي بوزن رفيع/متوسط (500 بدلاً من 700)
         const textArabicY = startY + (205 * s);
         draw3DText(ctx, "البيت الملكي", cx, textArabicY, `500 ${82 * s}px 'Reem Kufi', sans-serif`, s, false, textArabicY - 40 * s, textArabicY + 40 * s);
 
-        // النص الإنجليزي نحيف ومتباعد
         const textEngY = startY + (275 * s);
         if (ctx.letterSpacing !== undefined) {
           ctx.letterSpacing = `${8 * s}px`;
@@ -418,4 +428,4 @@
     }
   </script>
 </body>
-  </html>
+</html>
